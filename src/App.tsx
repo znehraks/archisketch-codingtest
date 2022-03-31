@@ -1,9 +1,13 @@
-//Header
-
-//Wrapper > Grid view >
+import GlobalStyles from "./components/styles/GlobalStyles";
+import Gallery from "./Gallery";
 
 const App = () => {
-  return <></>;
+  return (
+    <>
+      <GlobalStyles />
+      <Gallery />
+    </>
+  );
 };
 
 export default App;
