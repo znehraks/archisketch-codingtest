@@ -165,7 +165,12 @@ function ImgComponent({ itemId }: IProps) {
         />
         <span onClick={() => setIsModalClicked(!isModalClicked)}>...</span>
         <CardModal isModalClicked={isModalClicked}>
-          <div onClick={() => FileSaver.saveAs(itemId, `${itemId}`)}>
+          <div
+            onClick={() => {
+              FileSaver.saveAs(itemId, `${itemId}`);
+              setIsModalClicked(false);
+            }}
+          >
             다운로드
           </div>
           <div onClick={() => setIsDeleting([itemId])}>삭제</div>

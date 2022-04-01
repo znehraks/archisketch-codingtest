@@ -98,13 +98,6 @@ const GridView = styled.div`
   margin-top: 7px;
   padding: 0 32px 32px;
 `;
-// 체크박스 만든 후, 선택한 것에 따라 위에 표시
-// 모두선택 체크 박스 만들기
-// 다운로드,삭제 기능 구현
-// 선택취소 구현
-// 개별 카드에서 다운로드, 삭제 구현
-// 상세 페이지 확대 창 구현
-// 양옆 화살표 구현
 function Gallery() {
   const [mode, setMode] = useRecoilState(modeAtom);
   const [isDeleting, setIsDeleting] = useRecoilState(isDeletingAtom);
@@ -121,14 +114,14 @@ function Gallery() {
   };
   const download = () => {
     if (checkedList.length === 1) {
-      FileSaver.saveAs(checkedList[0], `${checkedList[0]}`);
+      FileSaver.saveAs(checkedList[0], checkedList[0]);
     } else {
       let zip = new JSZip();
       checkedList.forEach((item) => {
-        zip.file(item, item, { binary: true });
+        zip.file(item, btoa(item), { base64: true });
       });
       zip.generateAsync({ type: "blob" }).then((content) => {
-        FileSaver.saveAs(content, "archisketch");
+        FileSaver.saveAs(content, "archisketch.zip");
       });
     }
   };
