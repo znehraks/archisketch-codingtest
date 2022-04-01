@@ -1,6 +1,16 @@
 import testJson from "./test.json";
 import styled from "styled-components";
-//Header
+import ImgComponent from "./components/ImgComponent";
+import React from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  allCheckedAtom,
+  checkedListAtom,
+  dataAtom,
+  modeAtom,
+} from "./components/recoil";
+import Detail from "./components/Detail";
+//FixedHeader
 
 //Wrapper > Grid view >
 
@@ -8,15 +18,28 @@ const Wrapper = styled.div`
   width: 99vw;
   height: auto;
 `;
-const Header = styled.div`
+const FixedHeader = styled.div`
+  background-color: #fff;
   width: 100%;
   height: 48px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding: 8px;
+  position: fixed;
+  z-index: 10;
   button {
     width: 42px;
-    padding: 8px;
+    height: 30px;
+    font-weight: 800;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 10%;
+    cursor: pointer;
+    :hover {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
   }
+`;
+const ContentWrapper = styled.div`
+  padding-top: 52px;
 `;
 const Title = styled.div`
   width: 100%;
@@ -31,12 +54,23 @@ const Title = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 20px;
     :first-child {
+      font-size: 16px;
       justify-content: flex-start;
+    }
+    :last-child {
+      justify-content: flex-end;
+      span {
+        cursor: pointer;
+        margin-left: 5px;
+      }
     }
   }
 `;
-const Span = styled.span``;
+const Span = styled.span`
+  margin-right: 10px;
+`;
 const TitleSpan = styled.span`
   font-weight: 800;
 `;
@@ -47,39 +81,6 @@ const GridView = styled.div`
   margin-top: 7px;
   padding: 0 32px 32px;
 `;
-const ImgWrapper = styled.div`
-  flex: 0 1 20%;
-  width: 20%;
-`;
-
-const ImgCardWrapper = styled.div`
-  background-color: rgb(255, 255, 255);
-  cursor: pointer;
-  position: relative;
-  border-radius: 4px;
-  transition: box-shadow 0.25s ease 0s;
-  margin: 9px;
-  box-shadow: none;
-`;
-const ImgCardInnerWrapper = styled(ImgCardWrapper)`
-  width: 100%;
-  overflow: hidden;
-  padding-top: 71%;
-  :hover {
-    background-color: #000;
-  }
-  img {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    height: 100%;
-    width: 100%;
-    object-fit: cover;
-    :hover {
-      opacity: 0.6;
-    }
-  }
-`;
 // 체크박스 만든 후, 선택한 것에 따라 위에 표시
 // 모두선택 체크 박스 만들기
 // 다운로드,삭제 기능 구현
@@ -87,34 +88,66 @@ const ImgCardInnerWrapper = styled(ImgCardWrapper)`
 // 개별 카드에서 다운로드, 삭제 구현
 // 상세 페이지 확대 창 구현
 // 양옆 화살표 구현
-const Gallery = () => {
+function Gallery() {
+  const [mode, setMode] = useRecoilState(modeAtom);
+  const data = useRecoilValue(dataAtom);
+  const [checkedList, setCheckedList] = useRecoilState(checkedListAtom);
+  const allChecked = useRecoilValue(allCheckedAtom);
+  const selectAll = () => {
+    if (allChecked) {
+      setCheckedList([]);
+    } else {
+      setCheckedList([...data.map((item) => item._id)]);
+    }
+  };
+  console.log(checkedList);
   return (
     <Wrapper>
-      <Header>
-        <button>X</button>
-      </Header>
-      <Title>
-        <div>
-          <Span>81 개의 랜더샷</Span>
-        </div>
-        <div>
-          <TitleSpan>갤러리</TitleSpan>
-        </div>
-        <div />
-      </Title>
-      <GridView>
-        {testJson?.renderings?.map((item) => (
-          <ImgWrapper>
-            <ImgCardWrapper>
-              <ImgCardInnerWrapper>
-                <img src={item._id} alt={"인테리어"}></img>
-              </ImgCardInnerWrapper>
-            </ImgCardWrapper>
-          </ImgWrapper>
-        ))}
-      </GridView>
+      <FixedHeader>
+        <button onClick={() => mode === "DETAIL" && setMode("GRID")}>X</button>
+      </FixedHeader>
+      <ContentWrapper>
+        <Title>
+          <div>
+            {checkedList.length !== 0 ? (
+              <>
+                <Span>{checkedList.length}개의 이미지 선택됨 </Span>
+                <input
+                  type="checkbox"
+                  checked={allChecked}
+                  onChange={selectAll}
+                />
+                모두선택
+              </>
+            ) : (
+              <Span>{data.length} 개의 랜더샷</Span>
+            )}
+          </div>
+          <div>
+            <TitleSpan>갤러리</TitleSpan>
+          </div>
+          <div>
+            {checkedList.length !== 0 && (
+              <>
+                <span>다운</span>
+                <span>삭제</span>
+                <span onClick={() => setCheckedList([])}>선택취소</span>
+              </>
+            )}
+          </div>
+        </Title>
+        {mode === "GRID" ? (
+          <GridView>
+            {data?.map((item) => (
+              <ImgComponent key={item._id} itemId={item._id} />
+            ))}
+          </GridView>
+        ) : (
+          <Detail />
+        )}
+      </ContentWrapper>
     </Wrapper>
   );
-};
+}
 
 export default Gallery;
