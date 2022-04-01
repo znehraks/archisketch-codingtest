@@ -9,7 +9,7 @@ function App() {
   const setData = useSetRecoilState(dataAtom);
   useEffect(() => {
     setData(testJson.renderings);
-  }, []);
+  }, [setData]);
   return (
     <>
       <GlobalStyles />

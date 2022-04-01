@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import { checkedListAtom, modeAtom, selectedCardAtom } from "./recoil";
-
+import {
+  checkedListAtom,
+  isDeletingAtom,
+  modeAtom,
+  selectedCardAtom,
+} from "./recoil";
+import FileSaver from "file-saver";
 const ImgWrapper = styled.div`
   flex: 0 1 20%;
   width: 20%;
@@ -117,6 +122,7 @@ interface IProps {
 }
 function ImgComponent({ itemId }: IProps) {
   const setMode = useSetRecoilState(modeAtom);
+  const setIsDeleting = useSetRecoilState(isDeletingAtom);
   const setSelectedCard = useSetRecoilState(selectedCardAtom);
   const [checkedList, setCheckedList] = useRecoilState(checkedListAtom);
   const [isModalClicked, setIsModalClicked] = useState<boolean>(false);
@@ -137,6 +143,7 @@ function ImgComponent({ itemId }: IProps) {
     }
     setIsChecked((prev) => !prev);
   };
+
   return (
     <ImgWrapper>
       <ImgCardWrapper isChecked={isChecked}>
@@ -149,6 +156,7 @@ function ImgComponent({ itemId }: IProps) {
         >
           <img src={itemId} alt={"인테리어"}></img>
         </ImgCardInnerWrapper>
+
         <input
           type="checkbox"
           value={itemId}
@@ -157,8 +165,10 @@ function ImgComponent({ itemId }: IProps) {
         />
         <span onClick={() => setIsModalClicked(!isModalClicked)}>...</span>
         <CardModal isModalClicked={isModalClicked}>
-          <div>다운로드</div>
-          <div>삭제</div>
+          <div onClick={() => FileSaver.saveAs(itemId, `${itemId}`)}>
+            다운로드
+          </div>
+          <div onClick={() => setIsDeleting([itemId])}>삭제</div>
         </CardModal>
       </ImgCardWrapper>
     </ImgWrapper>

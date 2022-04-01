@@ -1,8 +1,17 @@
 import { atom, selector } from "recoil";
-import testJson from "../test.json";
 
 export const dataAtom = atom<{ _id: string }[]>({
   key: "data",
+  default: [],
+});
+
+export const modeAtom = atom<"GRID" | "DETAIL">({
+  key: "mode",
+  default: "GRID",
+});
+
+export const isDeletingAtom = atom<string[]>({
+  key: "isDeleting",
   default: [],
 });
 
@@ -15,13 +24,9 @@ export const allCheckedAtom = selector({
   key: "allChecked",
   get: ({ get }) => {
     const checkList = get(checkedListAtom);
-    return checkList.length === testJson.renderings.length;
+    const data = get(dataAtom);
+    return checkList.length === data.length;
   },
-});
-
-export const modeAtom = atom<"GRID" | "DETAIL">({
-  key: "mode",
-  default: "GRID",
 });
 
 export const selectedCardAtom = atom<string>({
@@ -29,12 +34,18 @@ export const selectedCardAtom = atom<string>({
   default: "",
 });
 
+export const resolutionAtom = atom<{ width?: number; height?: number }>({
+  key: "resolution",
+  default: {},
+});
+
 export const selectedCardIndexSelector = selector<number>({
   key: "selectedCardIndex",
   get: ({ get }) => {
+    const data = get(dataAtom);
     const selectedCard = get(selectedCardAtom);
     let selectedCardIndex = 0;
-    testJson.renderings.map((item, index) => {
+    data.map((item, index) => {
       if (item._id === selectedCard) {
         selectedCardIndex = index;
       }

@@ -1,11 +1,12 @@
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useEffect } from "react";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import {
   dataAtom,
+  resolutionAtom,
   selectedCardAtom,
   selectedCardIndexSelector,
 } from "./recoil";
-import testJson from "../test.json";
 
 const Wrapper = styled.div`
   position: relative;
@@ -18,7 +19,7 @@ const Wrapper = styled.div`
   background: rgb(250, 250, 250);
   img {
     width: 100%;
-    height: 100%;
+    height: 90%;
     object-fit: contain;
     background: rgb(250, 250, 250);
   }
@@ -69,6 +70,18 @@ function Detail() {
   const data = useRecoilValue(dataAtom);
   const [selectedCard, setSelectedCard] = useRecoilState(selectedCardAtom);
   const selectedCardIndex = useRecoilValue(selectedCardIndexSelector);
+  const setResolution = useSetRecoilState(resolutionAtom);
+  const getResolution = () => {
+    const url = selectedCard;
+    const img = new Image();
+    img.onload = function () {
+      setResolution({ width: img.width, height: img.height });
+    };
+    img.src = url;
+  };
+  useEffect(() => {
+    getResolution();
+  }, []);
   console.log(selectedCardIndex);
   return (
     <Wrapper>
