@@ -1,12 +1,14 @@
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import {
   checkedListAtom,
   dataAtom,
   isDeletingAtom,
+  isFromModalAtom,
   modeAtom,
   resolutionAtom,
 } from "../recoil";
+import { deleteImg } from "./functions";
 const Wrapper = styled.div`
   position: absolute;
   height: 100vh;
@@ -125,22 +127,10 @@ function DeletePopup() {
   const setMode = useSetRecoilState(modeAtom);
   const setResolution = useSetRecoilState(resolutionAtom);
   const [isDeleting, setIsDeleting] = useRecoilState(isDeletingAtom);
+  const isFromModal = useRecoilValue(isFromModalAtom);
   const setData = useSetRecoilState(dataAtom);
   const [checkedList, setCheckedList] = useRecoilState(checkedListAtom);
 
-  //이미지 삭제 함수,
-  //현재 체크된 이미지들을 제외한 나머지를 새 data로 업데이트
-  //즉, 체크된 이미지를 삭제한 배열이 새 data state가 됨.
-  const deleteImg = () => {
-    setData((prev) => {
-      const deleteTarget = [...checkedList, ...isDeleting];
-      return prev.filter((item) => !deleteTarget.includes(item._id));
-    });
-    setIsDeleting([]);
-    setCheckedList([]);
-    setResolution({});
-    setMode("GRID");
-  };
   return (
     <Wrapper>
       <Background>
@@ -166,7 +156,22 @@ function DeletePopup() {
             </span>
           </MessageWrap>
           <ButtonBox>
-            <Button onClick={deleteImg}>삭제</Button>
+            <Button
+              onClick={() =>
+                deleteImg(
+                  setData,
+                  checkedList,
+                  isDeleting,
+                  setIsDeleting,
+                  setCheckedList,
+                  setResolution,
+                  setMode,
+                  isFromModal
+                )
+              }
+            >
+              삭제
+            </Button>
             <Button onClick={() => setIsDeleting([])}>돌아가기</Button>
           </ButtonBox>
         </Section>

@@ -4,6 +4,7 @@ import styled from "styled-components";
 import {
   checkedListAtom,
   isDeletingAtom,
+  isFromModalAtom,
   modeAtom,
   selectedCardAtom,
 } from "../recoil";
@@ -124,6 +125,7 @@ function ImgComponent({ itemId }: IProps) {
   //recoil.ts 참고
   const setMode = useSetRecoilState(modeAtom);
   const setIsDeleting = useSetRecoilState(isDeletingAtom);
+  const setIsFromModal = useSetRecoilState(isFromModalAtom);
   const setSelectedCard = useSetRecoilState(selectedCardAtom);
   const [checkedList, setCheckedList] = useRecoilState(checkedListAtom);
 
@@ -132,24 +134,24 @@ function ImgComponent({ itemId }: IProps) {
 
   //현재 카드가 체크 되었는지 아닌지 상태 관리하는 hook
   const [isChecked, setIsChecked] = useState<boolean>(
-    checkedList.includes(itemId)
+    checkedList?.includes(itemId)
   );
 
   //모두선택 체크 해제 시, 단일 선택으로 체크 된 컴포넌트가 리랜더링 되지 않는 문제를 해결한 useEffect hook
   useEffect(() => {
-    setIsChecked(checkedList.includes(itemId));
-  }, [checkedList]);
+    setIsChecked(checkedList?.includes(itemId));
+  }, [checkedList!]);
 
   //체크박스 내에 onChange 함수
   //체크되자 않은 상태로 체크가 되면, 새롭게 checkedList의 원소로 추가
   //이미 체크된 카드에 다시 체크를 하면 토글되어, 기존의 checkedList에 추가된 본 원소를 제거
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isChecked) {
-      setCheckedList((prevList) =>
-        prevList.filter((item) => item !== e.target.value)
+      setCheckedList((prevList: string[]) =>
+        prevList.filter((item: string) => item !== e.target.value)
       );
     } else {
-      setCheckedList((prevList) => [...prevList, e.target.value]);
+      setCheckedList((prevList: string[]) => [...prevList, e.target.value]);
     }
     setIsChecked((prev) => !prev);
   };
@@ -183,7 +185,14 @@ function ImgComponent({ itemId }: IProps) {
           >
             다운로드
           </div>
-          <div onClick={() => setIsDeleting([itemId])}>삭제</div>
+          <div
+            onClick={() => {
+              setIsDeleting([itemId]);
+              setIsFromModal(true);
+            }}
+          >
+            삭제
+          </div>
         </CardModal>
       </ImgCardWrapper>
     </ImgWrapper>

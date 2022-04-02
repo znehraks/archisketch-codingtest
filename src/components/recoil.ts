@@ -21,6 +21,11 @@ export const isDeletingAtom = atom<string[]>({
   default: [],
 });
 
+//모달을 통해서 삭제를 할 경우, 체크가 여러 개 되었더라도, 해당 모달을 통해 들어온 이미지 한 개만 삭제.
+export const isFromModalAtom = atom<boolean>({
+  key: "isFromModal",
+  default: false,
+});
 //현재 체크된 이미지들 상태 관리
 //배열에 원소가 비어있으면 아무것도 체크되지 않은 상태
 export const checkedListAtom = atom<string[]>({

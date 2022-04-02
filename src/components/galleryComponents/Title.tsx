@@ -109,9 +109,9 @@ function Title() {
   return (
     <Wrapper>
       <div>
-        {checkedList.length !== 0 ? (
+        {checkedList?.length !== 0 ? (
           <>
-            <Span>{checkedList.length}개의 이미지 선택됨 </Span>
+            <Span>{checkedList?.length}개의 이미지 선택됨 </Span>
             <input
               type="checkbox"
               checked={allChecked}
@@ -127,7 +127,7 @@ function Title() {
         <TitleSpan>갤러리</TitleSpan>
       </div>
       <div>
-        {checkedList.length !== 0 && (
+        {checkedList?.length !== 0 && (
           <>
             <span onClick={() => download(checkedList)}>
               <img src={downloadImg} alt={"다운로드"} />
