@@ -66,11 +66,15 @@ const NextArrow = styled.div`
   transition: all 0.32s ease 0s;
   cursor: pointer;
 `;
+
 function Detail() {
+  //recoil.ts 참고
   const data = useRecoilValue(dataAtom);
   const [selectedCard, setSelectedCard] = useRecoilState(selectedCardAtom);
   const selectedCardIndex = useRecoilValue(selectedCardIndexSelector);
   const setResolution = useSetRecoilState(resolutionAtom);
+
+  //상세페이지의 이미지의 해상도를 구하는 함수
   const getResolution = () => {
     const url = selectedCard;
     const img = new Image();
@@ -79,10 +83,11 @@ function Detail() {
     };
     img.src = url;
   };
+  //상세페이지가 랜더링 된 후, 최초 1회만 실행
   useEffect(() => {
     getResolution();
   }, []);
-  console.log(selectedCardIndex);
+
   return (
     <Wrapper>
       {selectedCardIndex !== 0 && (

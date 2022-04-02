@@ -2,6 +2,5 @@
 
 #### To Do List
 
-- jsZip 디버그
-- 예외처리
-- 리펙토링
+- jsZip 디버그 O
+- 예외처리 O

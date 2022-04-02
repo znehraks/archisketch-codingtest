@@ -1,5 +1,8 @@
 import { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
+
+//전역 스타일 정보
+//초기화
 const GlobalStyles = createGlobalStyle`
     ${reset}
   html, body, div, span, applet, object, iframe,

@@ -16,6 +16,7 @@ const Background = styled.div`
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+  transition: all 0.2s;
   -webkit-transition: all 0.2s;
   -moz-transition: all 0.2s;
   -ms-transition: all 0.2s;
@@ -114,12 +115,17 @@ const Button = styled.button`
   }
 `;
 function DeletePopup() {
+  //recoil.ts 참고
   const [isDeleting, setIsDeleting] = useRecoilState(isDeletingAtom);
   const setData = useSetRecoilState(dataAtom);
   const [checkedList, setCheckedList] = useRecoilState(checkedListAtom);
+
+  //이미지 삭제 함수,
+  //현재 체크된 이미지들을 제외한 나머지를 새 data로 업데이트
+  //즉, 체크된 이미지를 삭제한 배열이 새 data state가 됨.
   const deleteImg = () => {
     setData((prev) => {
-      const deleteTarget = [...checkedList, ...isDeleting];
+      const deleteTarget = [...checkedList];
       return prev.filter((item) => !deleteTarget.includes(item._id));
     });
     setIsDeleting([]);

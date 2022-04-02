@@ -121,18 +121,28 @@ interface IProps {
   itemId: string;
 }
 function ImgComponent({ itemId }: IProps) {
+  //recoil.ts 참고
   const setMode = useSetRecoilState(modeAtom);
   const setIsDeleting = useSetRecoilState(isDeletingAtom);
   const setSelectedCard = useSetRecoilState(selectedCardAtom);
   const [checkedList, setCheckedList] = useRecoilState(checkedListAtom);
+
+  //카드에 hover 혹은 check 시, 생기는 [...]모양 메뉴를 누름으로써 해당 모달의 display를 조절하는 hook
   const [isModalClicked, setIsModalClicked] = useState<boolean>(false);
+
+  //현재 카드가 체크 되었는지 아닌지 상태 관리하는 hook
   const [isChecked, setIsChecked] = useState<boolean>(
     checkedList.includes(itemId)
   );
+
+  //모두선택 체크 해제 시, 단일 선택으로 체크 된 컴포넌트가 리랜더링 되지 않는 문제를 해결한 useEffect hook
   useEffect(() => {
     setIsChecked(checkedList.includes(itemId));
   }, [checkedList]);
 
+  //체크박스 내에 onChange 함수
+  //체크되자 않은 상태로 체크가 되면, 새롭게 checkedList의 원소로 추가
+  //이미 체크된 카드에 다시 체크를 하면 토글되어, 기존의 checkedList에 추가된 본 원소를 제거
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isChecked) {
       setCheckedList((prevList) =>

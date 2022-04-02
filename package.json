@@ -12,8 +12,10 @@
     "@types/react-dom": "^17.0.11",
     "file-saver": "^2.0.5",
     "jszip": "^3.8.0",
+    "jszip-utils": "^0.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-helmet": "^6.1.0",
     "react-scripts": "5.0.0",
     "recoil": "^0.6.1",
     "styled-components": "^5.3.5",
@@ -47,6 +49,7 @@
   },
   "devDependencies": {
     "@types/file-saver": "^2.0.5",
+    "@types/react-helmet": "^6.1.5",
     "@types/styled-components": "^5.1.24"
   }
 }

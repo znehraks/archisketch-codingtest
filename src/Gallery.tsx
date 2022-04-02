@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import ImgComponent from "./components/ImgComponent";
-import React from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   allCheckedAtom,
@@ -16,6 +15,8 @@ import trashcanImg from "./components/styles/images/trashcan.svg";
 import downloadImg from "./components/styles/images/download.svg";
 import FileSaver from "file-saver";
 import JSZip from "jszip";
+const JSZipUtils = require("jszip-utils");
+
 const Wrapper = styled.div`
   width: 99vw;
   height: auto;
@@ -63,7 +64,7 @@ const Title = styled.div`
     align-items: center;
     font-size: 20px;
     :first-child {
-      font-size: 16px;
+      font-size: 14px;
       justify-content: flex-start;
     }
     :last-child {
@@ -99,12 +100,15 @@ const GridView = styled.div`
   padding: 0 32px 32px;
 `;
 function Gallery() {
+  //recoil.ts 참고
   const [mode, setMode] = useRecoilState(modeAtom);
   const [isDeleting, setIsDeleting] = useRecoilState(isDeletingAtom);
   const data = useRecoilValue(dataAtom);
   const [checkedList, setCheckedList] = useRecoilState(checkedListAtom);
   const allChecked = useRecoilValue(allCheckedAtom);
   const [resolution, setResolution] = useRecoilState(resolutionAtom);
+
+  //모두 선택 버튼 클릭 시 실행 함수
   const selectAll = () => {
     if (allChecked) {
       setCheckedList([]);
@@ -112,20 +116,46 @@ function Gallery() {
       setCheckedList([...data.map((item) => item._id)]);
     }
   };
+
+  //zip파일에 정상적으로 압축하기 위해 url 형식인 이미지 파일을 바이너리 형식으로 변환
+  const urlToPromise = (url: any): any => {
+    return new Promise(function (resolve, reject) {
+      JSZipUtils.getBinaryContent(url, function (err: any, data: any) {
+        if (err) {
+          alert("다운로드 중 오류가 발생하였습니다.");
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+  };
+
+  //헤더의 download 버튼 클릭 시 실행되는 함수
+  //위의 urlToPromise 함수를 이용하여, 현재 체크된 이미지들을 binary로 형 변환 한 뒤, 압축 실행.
+  //archisketch.zip 파일 생성됨.
   const download = () => {
     if (checkedList.length === 1) {
-      FileSaver.saveAs(checkedList[0], checkedList[0]);
+      try {
+        FileSaver.saveAs(checkedList[0], checkedList[0]);
+      } catch (e: unknown) {
+        alert("다운로드 중 오류가 발생하였습니다.");
+      }
     } else {
-      let zip = new JSZip();
-      checkedList.forEach((item) => {
-        zip.file(item, btoa(item), { base64: true });
-      });
-      zip.generateAsync({ type: "blob" }).then((content) => {
-        FileSaver.saveAs(content, "archisketch.zip");
-      });
+      try {
+        let zip = new JSZip();
+        checkedList.forEach((item) => {
+          zip.file(item, urlToPromise(item), { binary: true });
+        });
+        zip.generateAsync({ type: "blob" }).then((content) => {
+          FileSaver.saveAs(content, "archisketch.zip");
+        });
+      } catch (e: unknown) {
+        alert("다운로드 중 오류가 발생하였습니다.");
+      }
     }
   };
-  console.log(checkedList);
+
   return (
     <Wrapper>
       <FixedHeader>
