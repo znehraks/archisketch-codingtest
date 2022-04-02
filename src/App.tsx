@@ -5,7 +5,8 @@ import GlobalStyles from "./components/styles/GlobalStyles";
 import Gallery from "./Gallery";
 import testJson from "./test.json";
 import Helmet from "react-helmet";
-
+import { ThemeProvider } from "styled-components";
+import { theme } from "./components/styles/theme";
 function App() {
   //recoil.ts 참고
   const setData = useSetRecoilState(dataAtom);
@@ -16,11 +17,13 @@ function App() {
   }, [setData]);
   return (
     <>
-      <Helmet>
-        <title>Archisketch - Web Editor</title>
-      </Helmet>
-      <GlobalStyles />
-      <Gallery />
+      <ThemeProvider theme={theme}>
+        <Helmet>
+          <title>Archisketch - Web Editor</title>
+        </Helmet>
+        <GlobalStyles />
+        <Gallery />
+      </ThemeProvider>
     </>
   );
 }

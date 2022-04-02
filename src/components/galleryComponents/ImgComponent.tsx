@@ -6,7 +6,7 @@ import {
   isDeletingAtom,
   modeAtom,
   selectedCardAtom,
-} from "./recoil";
+} from "../recoil";
 import FileSaver from "file-saver";
 const ImgWrapper = styled.div`
   flex: 0 1 20%;

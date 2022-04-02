@@ -6,7 +6,8 @@ import {
   resolutionAtom,
   selectedCardAtom,
   selectedCardIndexSelector,
-} from "./recoil";
+} from "../recoil";
+import { getResolution } from "./functions";
 
 const Wrapper = styled.div`
   position: relative;
@@ -74,18 +75,9 @@ function Detail() {
   const selectedCardIndex = useRecoilValue(selectedCardIndexSelector);
   const setResolution = useSetRecoilState(resolutionAtom);
 
-  //상세페이지의 이미지의 해상도를 구하는 함수
-  const getResolution = () => {
-    const url = selectedCard;
-    const img = new Image();
-    img.onload = function () {
-      setResolution({ width: img.width, height: img.height });
-    };
-    img.src = url;
-  };
   //상세페이지가 랜더링 된 후, 최초 1회만 실행
   useEffect(() => {
-    getResolution();
+    getResolution(selectedCard, setResolution);
   }, []);
 
   return (

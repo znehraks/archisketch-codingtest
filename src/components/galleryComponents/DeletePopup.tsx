@@ -1,6 +1,12 @@
 import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import { checkedListAtom, dataAtom, isDeletingAtom } from "./recoil";
+import {
+  checkedListAtom,
+  dataAtom,
+  isDeletingAtom,
+  modeAtom,
+  resolutionAtom,
+} from "../recoil";
 const Wrapper = styled.div`
   position: absolute;
   height: 100vh;
@@ -49,7 +55,7 @@ const ImgWrap = styled.div`
     width: 440px;
     height: 220px;
     border-radius: 16px 16px 0 0;
-    background: #6db2c5;
+    background: ${(props) => props.theme.accentColor};
   }
 `;
 
@@ -116,6 +122,8 @@ const Button = styled.button`
 `;
 function DeletePopup() {
   //recoil.ts 참고
+  const setMode = useSetRecoilState(modeAtom);
+  const setResolution = useSetRecoilState(resolutionAtom);
   const [isDeleting, setIsDeleting] = useRecoilState(isDeletingAtom);
   const setData = useSetRecoilState(dataAtom);
   const [checkedList, setCheckedList] = useRecoilState(checkedListAtom);
@@ -125,11 +133,13 @@ function DeletePopup() {
   //즉, 체크된 이미지를 삭제한 배열이 새 data state가 됨.
   const deleteImg = () => {
     setData((prev) => {
-      const deleteTarget = [...checkedList];
+      const deleteTarget = [...checkedList, ...isDeleting];
       return prev.filter((item) => !deleteTarget.includes(item._id));
     });
     setIsDeleting([]);
     setCheckedList([]);
+    setResolution({});
+    setMode("GRID");
   };
   return (
     <Wrapper>
